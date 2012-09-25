@@ -16,9 +16,9 @@ var template = {
 	staticMap: '\
 		<a class="staticmap" target="_blank" href="{{fullMapUrl}}" title="Click to view full map">\
 			<img style="border:none; width:{{width}}px, height:{{height}}px" \
-				src="http://maps.googleapis.com/maps/api/staticmap?sensor=false&NOTkey={{key}}&size={{width}}x{{height}}&markers=color:green%7Clabel:H%7C{{home}}{{vote}}">\
+				src="http://maps.googleapis.com/maps/api/staticmap?sensor=false&NOTkey={{key}}&size={{width}}x{{height}}&markers={{markers}}">\
 		</a>',
-	staticMapMarker: '&markers=color:red%7Clabel:V%7C{{vote}}',
+	staticMarker: '&markers=color:{{color}}%7Clabel:{{label}}%7C{{location}}',
 	voterInfo: '\
 		<div class="voterinfo">\
 			{{staticMap}}\
@@ -91,32 +91,47 @@ function loadVoterInfo( response ) {
 
 
 function formatStaticMap( response ) {
-	var home = encodeURIComponent( oneLineAddress( response.normalizedInput ) );
 	var fullMapUrl = '';  // template.fullMapUrl({ home: home.replace( /%20/g, '+' ) });
+	var markers =
+		addressMarker( response.normalizedInput, 'green', 'H' ) +
+		voteMarkers( response.pollingLocations, 'red', 'V' ) +
+		voteMarkers( response.earlyVoteSites, 'yellow', 'E' );
 	return template.staticMap({
 		key: settings.apiKey,
 		width: staticMapWidth,
 		height: staticMapHeight,
-		home: home,
-		vote: voteMarkers( response.pollingLocations ),
+		markers: markers,
 		fullMapUrl: fullMapUrl
 	});
 }
 
 
-function voteMarkers( locations ) {
+function voteMarkers( locations, color, label ) {
 	if( !( locations && locations.length ) ) return '';
 	return _.map( locations, function( location ) {
-		return template.staticMapMarker({
-			vote: encodeURIComponent( oneLineAddress( location.address ) )
-		});
+		return addressMarker( location.address, color, label );
 	}).join('');
+}
+
+
+function addressMarker( location, color, label ) {
+	return template.staticMarker({
+		location: urlAddress( location ),
+		color: color,
+		label: label
+	});
+}
+
+
+function urlAddress( address ) {
+	return encodeURIComponent( oneLineAddress(address) )
 }
 
 
 function oneLineAddress( address ) {
 	return template.oneLineAddress( address );
 }
+
 
 if( settings.defaultAddresses )
 	$('#inputs').val( settings.defaultAddresses );
