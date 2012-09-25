@@ -15,7 +15,7 @@ var template = {
 		</option>',
 	staticMap: '\
 		<a class="staticmap" target="_blank" href="{{fullMapUrl}}" title="Click to view full map">\
-			<img style="border:none; width:{{width}}px, height:{{height}}px" \
+			<img style="border:none; width:{{width}}px; height:{{height}}px;" \
 				src="http://maps.googleapis.com/maps/api/staticmap?sensor=false&NOTkey={{key}}&size={{width}}x{{height}}&markers={{markers}}">\
 		</a>',
 	staticMarker: '&markers=color:{{color}}%7Clabel:{{label}}%7C{{location}}',
