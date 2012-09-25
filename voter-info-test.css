@@ -1,0 +1,17 @@
+/*
+	voter-info-test.css by Michael Geary
+	See LICENSE for copyright and license
+*/
+
+body, button, input, option, select, textarea {
+	font-family: Arial,sans-serif;
+	font-size: 17px;
+}
+
+#selectform {
+	margin-bottom: 10px;
+}
+
+.staticmap {
+	margin: 4px;
+}
