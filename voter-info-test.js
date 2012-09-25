@@ -3,6 +3,9 @@
 
 var staticMapWidth = 400, staticMapHeight = 300;
 
+var pendingAddresses;
+
+
 _.templateSettings = {
 	interpolate : /\{\{(.+?)\}\}/g
 };
@@ -55,20 +58,31 @@ function loadElectionList( response ) {
 		return template.optionElection( election );
 	} ).join('') );
 	
-	$('#submit')[0].disabled = false;
+	enableSubmit( true );
+}
+
+
+function enableSubmit( enable ) {
+	$('#submit')[0].disabled = ! enable;
 }
 
 
 $('#inputform').submit( function( event ) {
+	enableSubmit( false );
 	$('#outputwrap').empty();
-	$('#inputs').val().split('\n').forEach( function( address ) {
-		address = $.trim( address );
-		if( ! address ) return;
-		loadAddress( address );
-	});
+	pendingAddresses = $('#inputs').val().split('\n');
+	nextAddress();
 	event.preventDefault();
 });
 
+
+function nextAddress() {
+	var address = $.trim( pendingAddresses.shift() );
+	if( address )
+		loadAddress( address );
+	else
+		enableSubmit( true );
+}
 
 function loadAddress( address ) {
 	var electionId = $('#electionlist').val();
@@ -87,6 +101,7 @@ function loadVoterInfo( response ) {
 		staticMap: formatStaticMap( response )
 	});
 	$('#outputwrap').append( html );
+	nextAddress();
 }
 
 
