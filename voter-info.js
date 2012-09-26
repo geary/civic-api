@@ -67,7 +67,8 @@ function getElections( callback ) {
 // Get voter information for an election ID and address
 function getVoterInfo( electionId, address, callback ) {
 	var request = gapi.client.request({
-		path: '/civicinfo/us_v1/voterinfo/' + electionId + '/lookup',
+		path: '/civicinfo/us_v1/voterinfo/' + electionId + '/lookup' +
+			( checked('#chkOfficial') ? '?officialOnly=true' : '' ),
 		method: 'POST',
 		body: { address: address }
 	});
