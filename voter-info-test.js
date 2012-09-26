@@ -33,18 +33,28 @@ for( var t in template )
 	template[t] = _.template( $.trim( template[t].replace( /\t/g, '' ) ) );
 
 
-function S() {
-	return Array.prototype.join.call( arguments, '' );
-}
-
-
-function load() {
-	gapi.client.setApiKey( settings.apiKey );
+function getElections( callback ) {
 	var request = gapi.client.request({
 		path: '/civicinfo/us_v1/elections',
 		method: 'GET'
 	});
 	request.execute( loadElectionList );
+}
+
+
+function getVoterInfo( electionId, address, callback ) {
+	var request = gapi.client.request({
+		path: '/civicinfo/us_v1/voterinfo/' + electionId + '/lookup',
+		method: 'POST',
+		body: { address: address }
+	});
+	request.execute( callback );
+}
+
+
+function load() {
+	gapi.client.setApiKey( settings.apiKey );
+	getElections( loadElectionList );
 }
 
 
@@ -86,12 +96,7 @@ function nextAddress() {
 
 function loadAddress( address ) {
 	var electionId = $('#electionlist').val();
-	var request = gapi.client.request({
-		path: '/civicinfo/us_v1/voterinfo/' + electionId + '/lookup',
-		method: 'POST',
-		body: { address: address }
-	});
-	request.execute( loadVoterInfo );
+	getVoterInfo( electionId, address, loadVoterInfo );
 }
 
 
