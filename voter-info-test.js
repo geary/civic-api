@@ -107,8 +107,15 @@ function loadVoterInfo( response ) {
 
 function formatStaticMap( response ) {
 	var fullMapUrl = '';  // template.fullMapUrl({ home: home.replace( /%20/g, '+' ) });
+	var state =
+		response.state &&
+		response.state[0];
+	var leo =
+		state.local_jurisdiction &&
+		state.local_jurisdiction.electionAdministrationBody;
 	var markers =
 		addressMarker( response.normalizedInput, 'green', 'H' ) +
+		addressMarker( leo && leo.physicalAddress, 'blue', 'L' ) +
 		voteMarkers( response.pollingLocations, 'red', 'V' ) +
 		voteMarkers( response.earlyVoteSites, 'yellow', 'E' );
 	return template.staticMap({
@@ -130,7 +137,7 @@ function voteMarkers( locations, color, label ) {
 
 
 function addressMarker( location, color, label ) {
-	return template.staticMarker({
+	return ! location ? '' : template.staticMarker({
 		location: urlAddress( location ),
 		color: color,
 		label: label
