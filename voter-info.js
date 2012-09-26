@@ -106,14 +106,19 @@ $('#inputform').submit( function( event ) {
 });
 
 
-// Process the next address - either look it up or
-// re-enable submit button when done
+// Process the next address - either look it up or re-enable
+// submit button when done, and skip blank addresses
 function nextAddress() {
-	var address = $.trim( pendingAddresses.shift() );
-	if( address )
-		loadAddress( address );
-	else
+	if( pendingAddresses.length ) {
+		var address = $.trim( pendingAddresses.shift() );
+		if( address )
+			loadAddress( address );
+		else
+			nextAddress();
+	}
+	else {
 		enableSubmit( true );
+	}
 }
 
 
