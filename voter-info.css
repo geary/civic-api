@@ -8,15 +8,23 @@ body, button, input, option, select, textarea {
 	font-size: 17px;
 }
 
+pre {
+	margin: 0;
+}
+
 #selectform, #inputform {
 	margin-bottom: 10px;
 }
 
 .staticmap {
-	margin: 8px 0 8px 8px;
 	float: right;
+}
+
+.address {
+	font-weight: bold;
 }
 
 .voterinfo {
 	border-top: 1px solid #AAA;
+	padding-top: 8px;
 }

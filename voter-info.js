@@ -32,8 +32,9 @@ var template = {
 	voterInfo: '\
 		<div class="voterinfo">\
 			{{{staticMap}}}\
-			<pre><code>{{json}}</code></pre>\
-		</div>'
+			<div class="address">{{address}}</div>\
+			<pre class="json"><code>{{json}}</code></pre>\
+ 		</div>'
 };
 
 
@@ -119,14 +120,17 @@ function nextAddress() {
 // Start the lookup for one address
 function loadAddress( address ) {
 	var electionId = $('#electionlist').val();
-	getVoterInfo( electionId, address, loadVoterInfo );
+	getVoterInfo( electionId, address, function( response ) {
+		loadVoterInfo( response, address );
+	});
 }
 
 
 // Populate the info list for one address response
-function loadVoterInfo( response ) {
+function loadVoterInfo( response, address ) {
 	var html = template.voterInfo({
-		json: JSON.stringify( response, null, '    ' ),
+		json: $.trim( JSON.stringify( response, null, '    ' ) ),
+		address: address,
 		staticMap: formatStaticMap( response )
 	});
 	$('#outputwrap').append( html );
