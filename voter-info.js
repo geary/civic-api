@@ -140,10 +140,10 @@ function formatStaticMap( response ) {
 		state.local_jurisdiction &&
 		state.local_jurisdiction.electionAdministrationBody;
 	var markers =
-		addressMarker( response.normalizedInput, 'green', 'H' ) +
-		addressMarker( leo && leo.physicalAddress, 'blue', 'L', '#chkMapLeo' ) +
-		voteMarkers( response.pollingLocations, 'red', 'P', '#chkPolling' ) +
-		voteMarkers( response.earlyVoteSites, 'yellow', 'E', '#chkMapEarly' );
+		staticMarkers( response.normalizedInput, 'green', 'H' ) +
+		staticMarkers( leo && leo.physicalAddress, 'blue', 'L', '#chkMapLeo' ) +
+		staticMarkers( response.pollingLocations, 'red', 'P', '#chkPolling' ) +
+		staticMarkers( response.earlyVoteSites, 'yellow', 'E', '#chkMapEarly' );
 	return template.staticMap({
 		key: settings.apiKey,
 		width: staticMapWidth,
@@ -155,30 +155,23 @@ function formatStaticMap( response ) {
 
 
 // Return static map URL code for all the markers in a locations list
-// (either polling places or early voting locations)
-function voteMarkers( locations, color, label, checkbox ) {
+// or for a single location marker (only if checkbox checked or not present)
+function staticMarkers( locations, color, label, checkbox ) {
 	if( ! checked(checkbox) ) return '';  // only if selected
-	if( !( locations && locations.length ) ) return '';
+	if( ! locations ) return '';
+	if( locations.length == null ) locations = [ locations ];
 	return _.map( locations, function( location ) {
-		return addressMarker( location.address, color, label );
+		return template.staticMarker({
+			location: urlAddress( location.address || location ),
+			color: color,
+			label: label
+		});
 	}).join('');
 }
 
 
-// Return static map URL code for a single address marker
-function addressMarker( location, color, label, checkbox ) {
-	if( ! checked(checkbox) ) return '';  // only if selected
-	if( ! location ) return '';
-	return template.staticMarker({
-		location: urlAddress( location ),
-		color: color,
-		label: label
-	});
-}
-
-
 // Is a checkbox (specified by CSS selector) checked?
-// Return true if checkbox selector is null
+// Also return true if checkbox selector is null
 function checked( checkbox ) {
 	return ! checkbox  ||  $(checkbox)[0].checked;
 }
