@@ -115,9 +115,9 @@ function formatStaticMap( response ) {
 		state.local_jurisdiction.electionAdministrationBody;
 	var markers =
 		addressMarker( response.normalizedInput, 'green', 'H' ) +
-		addressMarker( leo && leo.physicalAddress, 'blue', 'L' ) +
-		voteMarkers( response.pollingLocations, 'red', 'V' ) +
-		voteMarkers( response.earlyVoteSites, 'yellow', 'E' );
+		addressMarker( leo && leo.physicalAddress, 'blue', 'L', '#chkMapLeo' ) +
+		voteMarkers( response.pollingLocations, 'red', 'P', '#chkPolling' ) +
+		voteMarkers( response.earlyVoteSites, 'yellow', 'E', '#chkMapEarly' );
 	return template.staticMap({
 		key: settings.apiKey,
 		width: staticMapWidth,
@@ -128,7 +128,8 @@ function formatStaticMap( response ) {
 }
 
 
-function voteMarkers( locations, color, label ) {
+function voteMarkers( locations, color, label, checkbox ) {
+	if( ! checked(checkbox) ) return '';
 	if( !( locations && locations.length ) ) return '';
 	return _.map( locations, function( location ) {
 		return addressMarker( location.address, color, label );
@@ -136,14 +137,20 @@ function voteMarkers( locations, color, label ) {
 }
 
 
-function addressMarker( location, color, label ) {
-	return ! location ? '' : template.staticMarker({
+function addressMarker( location, color, label, checkbox ) {
+	if( ! checked(checkbox) ) return '';
+	if( ! location ) return '';
+	return template.staticMarker({
 		location: urlAddress( location ),
 		color: color,
 		label: label
 	});
 }
 
+
+function checked( checkbox ) {
+	return ! checkbox  ||  $(checkbox)[0].checked;
+}
 
 function urlAddress( address ) {
 	return encodeURIComponent( oneLineAddress(address) )
