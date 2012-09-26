@@ -11,11 +11,12 @@ _.templateSettings = {
 	interpolate : /\{\{(.+?)\}\}/g
 };
 
+
 // Templates for HTML code and other strings
 // Leading/trailing whitespace and all tab characters will be removed
 // (this file uses tabs for indentation)
 // Note that the \-escaped newlines do not insert a newline in the string;
-// end a line with \n\ if you want an actual newline, or use \n anywhere
+// end a line with \n\ if you want an actual newline, or use \n elsewhere
 var template = {
 	oneLineAddress: '{{line1}}, {{city}}, {{state}} {{zip}}',
 	optionElection: '\
@@ -23,10 +24,12 @@ var template = {
 			ID {{id}}: {{electionDay}} {{name}}\
 		</option>',
 	staticMap: '\
-		<a class="staticmap" target="_blank" href="{{fullMapUrl}}" title="Click to view full map">\
+		<!--<a class="staticmap" target="_blank" href="{{fullMapUrl}}" title="Click to view full map">-->\
+		<div class="staticmap">\
 			<img style="border:none; width:{{width}}px; height:{{height}}px;" \
 				src="http://maps.googleapis.com/maps/api/staticmap?sensor=false&NOTkey={{key}}&size={{width}}x{{height}}&markers={{markers}}">\
-		</a>',
+		</div>\
+		<!--</a>-->',
 	staticMarker: '&markers=color:{{color}}%7Clabel:{{label}}%7C{{location}}',
 	voterInfo: '\
 		<div class="voterinfo">\
