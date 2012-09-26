@@ -150,6 +150,7 @@ function formatStaticMap( response ) {
 		response.state &&
 		response.state[0];
 	var leo =
+		state &&
 		state.local_jurisdiction &&
 		state.local_jurisdiction.electionAdministrationBody;
 	var markers =
