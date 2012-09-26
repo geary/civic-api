@@ -1,4 +1,4 @@
-// voter-info-test.js by Michael Geary
+// voter-info.js by Michael Geary
 // See LICENSE for copyright and license
 
 var staticMapWidth = 400, staticMapHeight = 300;
