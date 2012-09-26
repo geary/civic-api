@@ -17,6 +17,10 @@ var template = {
 		<option value="{{id}}">\
 			ID {{id}}: {{electionDay}} {{name}}\
 		</option>',
+	optionNoElections: '\
+		<option disabled>\
+			No elections\
+		</option>',
 	staticMap: '\
 		<!--<a class="staticmap" target="_blank" href="{{fullMapUrl}}" title="Click to view full map">-->\
 		<div class="staticmap">\
@@ -74,7 +78,7 @@ function getVoterInfo( electionId, address, callback ) {
 function loadElectionList( response ) {
 	var elections = response && response.elections || [];
 	if( ! elections.length ) {
-		$('#electionlist').html( '<option disabled>No elections</option>' );
+		$('#electionlist').html( template.optionNoElections() );
 		return;
 	}
 	$('#electionlist').html( _.map( elections, function( election ) {
