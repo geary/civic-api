@@ -6,12 +6,6 @@ var staticMapWidth = 400, staticMapHeight = 300;
 var pendingAddresses;
 
 
-// Use {{variable}} instead of <%=variable%> in templates
-_.templateSettings = {
-	interpolate : /\{\{(.+?)\}\}/g
-};
-
-
 // Templates for HTML code and other strings
 // Leading/trailing whitespace and all tab characters will be removed
 // (this file uses tabs for indentation)
@@ -33,15 +27,26 @@ var template = {
 	staticMarker: '&markers=color:{{color}}%7Clabel:{{label}}%7C{{location}}',
 	voterInfo: '\
 		<div class="voterinfo">\
-			{{staticMap}}\
+			{{{staticMap}}}\
 			<pre><code>{{json}}</code></pre>\
 		</div>'
 };
 
 
-// Compile all the templates, trimming whitespace and removing tab characters
-for( var t in template )
-	template[t] = _.template( $.trim( template[t].replace( /\t/g, '' ) ) );
+// Compile all the templates, trimming whitespace, removing tab characters,
+// and converting Mustache-style syntax to Underscore:
+// {{escapedValue}}
+// {{{unescapedValue}}}
+// {{@JavaScriptCode}}
+for( var t in template ) {
+	var text = $.trim( template[t].replace( /\t/g, '' ) )
+		.replace( /\{\{\{/g, '<%=' )
+		.replace( /\{\{@/g, '<%' )
+		.replace( /\{\{/g, '<%-' )
+		.replace( /\}\}\}/g, '%>' )
+		.replace( /\}\}/g, '%>' )
+	template[t] = _.template( text );
+}
 
 
 // Get the list of available elections
