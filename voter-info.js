@@ -11,7 +11,11 @@ _.templateSettings = {
 	interpolate : /\{\{(.+?)\}\}/g
 };
 
-// Templates for all the HTML UI code
+// Templates for HTML code and other strings
+// Leading/trailing whitespace and all tab characters will be removed
+// (this file uses tabs for indentation)
+// Note that the \-escaped newlines do not insert a newline in the string;
+// end a line with \n\ if you want an actual newline, or use \n anywhere
 var template = {
 	oneLineAddress: '{{line1}}, {{city}}, {{state}} {{zip}}',
 	optionElection: '\
@@ -31,7 +35,8 @@ var template = {
 		</div>'
 };
 
-// Compile all the templates
+
+// Compile all the templates, trimming whitespace and removing tab characters
 for( var t in template )
 	template[t] = _.template( $.trim( template[t].replace( /\t/g, '' ) ) );
 
@@ -54,13 +59,6 @@ function getVoterInfo( electionId, address, callback ) {
 		body: { address: address }
 	});
 	request.execute( callback );
-}
-
-
-// Startup code, called when the GAPI client is ready
-function load() {
-	gapi.client.setApiKey( settings.apiKey );
-	getElections( loadElectionList );
 }
 
 
@@ -193,3 +191,10 @@ function oneLineAddress( address ) {
 // Initialization - fill in default addresses from private settings file
 if( settings.defaultAddresses )
 	$('#inputs').val( settings.defaultAddresses );
+
+
+// Startup code, called when the GAPI client is ready
+function load() {
+	gapi.client.setApiKey( settings.apiKey );
+	getElections( loadElectionList );
+}
