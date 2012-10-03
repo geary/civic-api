@@ -54,25 +54,67 @@ for( var t in template ) {
 }
 
 
+// Parse the query string in a URL and return an object of
+// the key=value pairs.
+// Example:
+//     var url = 'http://example.com/test?a=b&c=d'
+//     var p = parseQuery(url);
+// Now p contains { a:'b', c:'d' }
+function parseQuery( query ) {
+	if( query == null ) return {};
+	if( typeof query != 'string' ) return query;
+	if( query.charAt(0) == '{') return eval('(' + query + ')');
+
+	var params = {};
+	if( query ) {
+		var array = query.replace( /^[#?]/, '' ).split( '&' );
+		for( var i = 0, n = array.length;  i < n;  ++i ) {
+			var p = array[i].split( '=' ),
+				key = decodeURIComponent( p[0] ),
+				value = decodeURIComponent( p[1] );
+			if( key ) params[key] = value;
+		}
+	}
+	return params;
+}
+
+
+// Get the URL query parameters for this page
+var params = parseQuery( location.search );
+
+
+// Set default parameters
+params.root = params.root || 'https://www.googleapis.com';
+params.api = params.api  || 'civicinfo/us_v1';
+
+
+// Wrap the Civic Information API calls and use custom
+// root and api values from this page's URL
+function gapiFetch( method, path, body, callback ) {
+	gapi.client.request({
+		root: params.root,
+		path: '/' + params.api + '/' + path,
+		method: method,
+		body: body
+	}).execute( callback );
+}
+
+
 // Get the list of available elections
 function getElections( callback ) {
-	var request = gapi.client.request({
-		path: '/civicinfo/us_v1/elections',
-		method: 'GET'
-	});
-	request.execute( loadElectionList );
+	gapiFetch( 'GET', 'elections', null, loadElectionList );
 }
 
 
 // Get voter information for an election ID and address
 function getVoterInfo( electionId, address, callback ) {
-	var request = gapi.client.request({
-		path: '/civicinfo/us_v1/voterinfo/' + electionId + '/lookup' +
-			( checked('#chkOfficial') ? '?officialOnly=true' : '' ),
-		method: 'POST',
-		body: { address: address }
-	});
-	request.execute( callback );
+	gapiFetch( 'POST',
+		'voterinfo/' + electionId + '/lookup' + (
+			checked('#chkOfficial') ? '?officialOnly=true' : ''
+		),
+		{ address: address },
+		callback
+	);
 }
 
 
